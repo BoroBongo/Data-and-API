@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace SerialisationApp
 {
+    [Serializable]
     public class Trainee
     {
         public string? FirstName { get; init; }
         public string LastName { get; init; } = String.Empty;
-        public int SpartaNo { get; init; }
+        public int? SpartaNo { get; init; }
         public string FullName => $"{this.FirstName} {this.LastName}";
 
         public override string? ToString()

@@ -4,16 +4,14 @@ namespace SerialisationApp;
 
 public class Program
 {
+    private static readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
     public static void Main()
     {
-        Console.WriteLine("Hello, world!");
-        Trainee trainee = new Trainee() { FirstName = "Adam", LastName = "Kolaczynski" };
-        Console.WriteLine(trainee);
-        Console.WriteLine(trainee.FirstName + " " + trainee.LastName);
-        Console.WriteLine(trainee.FullName);
-        Console.WriteLine(trainee.FullName);
-        Trainee trainee2 = new Trainee();
-        Console.WriteLine(trainee2.FullName);
+        Trainee trainee = new Trainee() { FirstName = "Adam", LastName = "Kolaczynski", SpartaNo=1001 };
+        SerialiserBinary sB = new SerialiserBinary();
+        sB.SerialiseToFile($"{path}/BinaryTrainee.bin", trainee);
 
+        Trainee deserialised = sB.DeserialiseFromFile<Trainee>($"{path}/BinaryTrainee.bin");
+        Console.WriteLine(deserialised);
     }
 }
