@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 
 namespace ReadingCSVApp
 {
+    [Serializable]
     public class Employees
     {
-        private int Emp_ID { get; init; }
-        private string NamePrefix { get; init; }
-        private string FirstName { get; init; }
-        private string MiddleInitial { get; init; }
-        private string LastName { get; init; }
-        private char Gender { get; init; }
-        private string EMail { get; init; }
-        private DateTime DateOfBirth { get; init; }
-        private DateTime DateOfJoining { get; init; }
-        private string Salary { get; init; }
+        public int Emp_ID { get; init; }
+        public string NamePrefix { get; init; }
+        public string FirstName { get; init; }
+        public string MiddleInitial { get; init; }
+        public string LastName { get; init; }
+        public char Gender { get; init; }
+        public string EMail { get; init; }
+        public DateTime DateOfBirth { get; init; }
+        public DateTime DateOfJoining { get; init; }
+        public string Salary { get; init; }
 
         public Employees(string[] input)
         {

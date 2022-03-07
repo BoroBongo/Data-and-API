@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -14,10 +15,10 @@ namespace SerialisationApp
         {
 
             T output;
-            FileStream fs = new FileStream(filePath, FileMode.Open);
+            StreamReader sr = File.OpenText(filePath);
             try
             {
-                output = JsonSerializer.Deserialize<T>(fs);
+                output = JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
             }
             catch (SerializationException e)
             {
@@ -26,7 +27,7 @@ namespace SerialisationApp
             }
             finally
             {
-                fs.Close();
+                sr.Close();
             }
             return output;
         }
@@ -34,7 +35,7 @@ namespace SerialisationApp
         public void SerialiseToFile<T>(string filePath, T item)
         {
             // create a BinaryFormatter object, and use it to serialize the item to file
-            string jsonContent = JsonSerializer.Serialize(item);
+            string jsonContent = JsonConvert.SerializeObject(item, Formatting.Indented);
 
             File.WriteAllText(filePath, jsonContent);
             // explain that binary serialisation has been deprected in .NET5 due to security concerns

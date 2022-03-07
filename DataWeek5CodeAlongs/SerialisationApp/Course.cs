@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SerialisationApp
 {
+    [Serializable]
     public class Course
     {
         public string Subject { get; set; }
