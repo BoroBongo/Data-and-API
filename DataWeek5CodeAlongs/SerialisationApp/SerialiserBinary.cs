@@ -4,7 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 // warning - binary formatter is now obselete as of .NET5.0namespace SerialisationApp
 namespace SerialisationApp
 {
-    public class SerialiserBinary
+    public class SerialiserBinary : ISerialise
 {
 
     public void SerialiseToFile<T>(string filePath, T item)
@@ -18,7 +18,7 @@ namespace SerialisationApp
         fileStream.Close();
     }
 
-        internal T DeserialiseFromFile<T>(string filePath)
+        public T DeserialiseFromFile<T>(string filePath)
         {
 
                 T output;
