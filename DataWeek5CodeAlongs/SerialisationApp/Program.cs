@@ -14,5 +14,17 @@ public class Program
 
         Trainee deserialised = _serialiser.DeserialiseFromFile<Trainee>($"{path}/BinaryTrainee.bin");
         Console.WriteLine(deserialised);
+
+        _serialiser = new SerialiserXML();
+        _serialiser.SerialiseToFile($"{path}/BinaryTrainee.XML", trainee);
+
+        Trainee deserialised2 = _serialiser.DeserialiseFromFile<Trainee>($"{path}/BinaryTrainee.XML");
+        Console.WriteLine(deserialised2);
+
+        _serialiser = new SerialiserJSON();
+        _serialiser.SerialiseToFile($"{path}/BinaryTrainee.JSON", trainee);
+
+        Trainee deserialised3 = _serialiser.DeserialiseFromFile<Trainee>($"{path}/BinaryTrainee.JSON");
+        Console.WriteLine(deserialised3);
     }
 }
