@@ -35,6 +35,8 @@ namespace ReadingCSVApp
             DateOfJoining = Convert.ToDateTime($"{tempDate[1]}/{tempDate[0]}/{tempDate[2]}");
             Salary = input[9];
         }
+
+        internal Employees() { }
     }
 }
 //Emp ID, Name Prefix, First Name, Middle Initial, Last Name, Gender, E Mail, Date of Birth, Date of Joining, Salary

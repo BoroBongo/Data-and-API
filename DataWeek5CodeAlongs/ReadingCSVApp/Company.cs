@@ -9,11 +9,16 @@ namespace ReadingCSVApp
     [Serializable]
     public class Company
     {
-        public List<Employees> employees { get;} = new List<Employees>() { };
+        public List<Employees> employeesList { get;} = new List<Employees>() { };
 
         public Company(List<Employees> employees)
         {
-            this.employees = employees;
+            this.employeesList = employees;
+        }
+
+        internal Company()
+        {
+            
         }
     }
 }
