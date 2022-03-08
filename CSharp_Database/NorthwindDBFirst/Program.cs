@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using NorthwindDBFirst;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -13,7 +14,7 @@ namespace SQLWithCSharp
 
             var newCustomer = new Customer()
             {
-                CustomerID = "MANDA",
+                CustomerId = "MANDA",
                 ContactName = "Nish Mandal",
                 City = "Birmingham",
                 CompanyName = "ToysRUs"
@@ -43,7 +44,7 @@ namespace SQLWithCSharp
                         var contactTitle = sqlReader["ContactTitle"].ToString();
 
                         //new customer object
-                        var customer = new Customer() { ContactTitle = contactTitle, CustomerID = customerID, ContactName = contactName, City = city, CompanyName = companyName };
+                        var customer = new Customer() { ContactTitle = contactTitle, CustomerId = customerID, ContactName = contactName, City = city, CompanyName = companyName };
 
                         customers.Add(customer);
                     }
@@ -51,7 +52,7 @@ namespace SQLWithCSharp
                     // iterate over and output all customers
                     foreach (var c in customers)
                     {
-                        Console.WriteLine($"Customer {c.GetFullName()} has ID {c.CustomerID} and lives in {c.City}");
+                        Console.WriteLine($"Customer {c.GetFullName()} has ID {c.CustomerId} and lives in {c.City}");
                     }
                     // Close the reader
                     sqlReader.Close();
@@ -63,7 +64,7 @@ namespace SQLWithCSharp
                     // if successful, this should equal 1
                     affected = command4.ExecuteNonQuery();
                 }
-                string sqlString = $"INSERT INTO Customers(CustomerID, ContactName, City, CompanyName) VALUES ('{newCustomer.CustomerID}', '{newCustomer.ContactName}', '{newCustomer.City}','{newCustomer.CompanyName}')";
+                string sqlString = $"INSERT INTO Customers(CustomerID, ContactName, City, CompanyName) VALUES ('{newCustomer.CustomerId}', '{newCustomer.ContactName}', '{newCustomer.City}','{newCustomer.CompanyName}')";
                 // execute insert SQL command
                 using (var command2 = new SqlCommand(sqlString, connection))
                 {
@@ -90,9 +91,9 @@ namespace SQLWithCSharp
 
                 }
                 connection.Close();
+            }
+
+
         }
-
-
-    }
     }
 }
