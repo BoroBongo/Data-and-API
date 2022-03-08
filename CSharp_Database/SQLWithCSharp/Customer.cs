@@ -13,5 +13,6 @@ namespace SQLWithCSharp
         {
             return $"{ContactTitle} - {ContactName}";
         }
+
     }
 }
