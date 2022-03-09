@@ -276,7 +276,9 @@ namespace SQLWithCSharp
                     Console.WriteLine(s);
                 }
 
-                var Query4Method = db.Customers.Where(c => c.City == "London").OrderBy(c => c.City);
+                var Query4Method = db.Customers.Where(c => c.City == "London").OrderBy(c => c.ContactName);
+
+
 
             }
 
