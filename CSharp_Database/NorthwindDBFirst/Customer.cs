@@ -27,5 +27,10 @@ namespace NorthwindDBFirst
         public virtual ICollection<Order> Orders { get; set; }
 
         public virtual ICollection<CustomerDemographic> CustomerTypes { get; set; }
+
+        public override string? ToString()
+        {
+            return $"{this.CustomerId} - {this.ContactName} - {this.City}";
+        }
     }
 }
