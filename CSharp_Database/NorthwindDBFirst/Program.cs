@@ -283,55 +283,114 @@ namespace SQLWithCSharp
             //}
 
 
-            using (var db = new NorthwindContext())
-            {
-                var ordersQuery = from Order in db.Orders.Include(ord=>ord.Customer).Include(ord=>ord.OrderDetails).ThenInclude(od=>od.Product)
-                                  where Order.Freight > 750
-                                  select Order;
+            //using (var db = new NorthwindContext())
+            //{
+            //    var ordersQuery = from Order in db.Orders.Include(ord=>ord.Customer).Include(ord=>ord.OrderDetails).ThenInclude(od=>od.Product)
+            //                      where Order.Freight > 750
+            //                      select Order;
 
-                foreach(var order in ordersQuery)
-                {
-                    if(order.Customer != null)
-                    {
-                        Console.WriteLine($"{order.Customer.ContactName} of {order.Customer.City} paid {order.Freight} for shipping");
-                    }
-                }
-                Console.WriteLine("----------------------------------------------------");
-                foreach(var order in ordersQuery)
-                {
-                    if(order.Customer != null)
-                    {
-                        Console.WriteLine($"{order.Customer.ContactName} of {order.Customer.City} paid {order.Freight} for shipping");
-                    }
-                    foreach(var oD in order.OrderDetails)
-                    {
-                        if(oD.Order != null)
-                        {
-                            Console.WriteLine($"\tProduct ID: {oD.ProductId}, Product Name: {oD.Product.ProductName}, Quantity: {oD.Quantity}");
-                        }
-                    }
-                }
+            //    foreach(var order in ordersQuery)
+            //    {
+            //        if(order.Customer != null)
+            //        {
+            //            Console.WriteLine($"{order.Customer.ContactName} of {order.Customer.City} paid {order.Freight} for shipping");
+            //        }
+            //    }
+            //    Console.WriteLine("----------------------------------------------------");
+            //    foreach(var order in ordersQuery)
+            //    {
+            //        if(order.Customer != null)
+            //        {
+            //            Console.WriteLine($"{order.Customer.ContactName} of {order.Customer.City} paid {order.Freight} for shipping");
+            //        }
+            //        foreach(var oD in order.OrderDetails)
+            //        {
+            //            if(oD.Order != null)
+            //            {
+            //                Console.WriteLine($"\tProduct ID: {oD.ProductId}, Product Name: {oD.Product.ProductName}, Quantity: {oD.Quantity}");
+            //            }
+            //        }
+            //    }
 
-                Console.WriteLine("----------------------------------------------------");
-                var orderQueryUsingJoin = from Ord in db.Orders
-                                          where Ord.Freight > 750
-                                          join Customer in db.Customers on Ord.CustomerId equals Customer.CustomerId
-                                          select new
-                                          {
-                                              CustomerContactName = Customer.ContactName,
-                                              City = Customer.City,
-                                              Freight = Ord.Freight
-                                          };
-                foreach(var result in orderQueryUsingJoin)
-                {
-                    Console.WriteLine($"{result.CustomerContactName} of {result.City} paid {result.Freight} for shipping");
-                }
+            //    Console.WriteLine("----------------------------------------------------");
+            //    var orderQueryUsingJoin = from Ord in db.Orders
+            //                              where Ord.Freight > 750
+            //                              join Customer in db.Customers on Ord.CustomerId equals Customer.CustomerId
+            //                              select new
+            //                              {
+            //                                  CustomerContactName = Customer.ContactName,
+            //                                  City = Customer.City,
+            //                                  Freight = Ord.Freight
+            //                              };
+            //    foreach(var result in orderQueryUsingJoin)
+            //    {
+            //        Console.WriteLine($"{result.CustomerContactName} of {result.City} paid {result.Freight} for shipping");
+            //    }
 
 
-                int a = 0;
-            }
+            //    int a = 0;
+            //}
             //end of <using>
 
+
+            using(var db = new NorthwindContext())
+            {
+                var QueryEx1 = from Cust in db.Customers
+                               where Cust.City =="Paris" || Cust.City == "London"
+                               select Cust;
+
+                foreach(var Cust in QueryEx1)
+                {
+                    Console.WriteLine($"{Cust.CustomerId} {Cust.CompanyName} {Cust.Address} {Cust.ContactName}");
+                }
+
+                var QueryEx2 = from prod in db.Products
+                               where prod.QuantityPerUnit.Contains("bottle")
+                               select prod;
+                foreach(var prod in QueryEx2)
+                {
+                    Console.WriteLine($"{prod.ProductName}, {prod.QuantityPerUnit}");
+                }
+                Console.WriteLine("-------------------------------------------------------------");
+
+                var QueryEx3 = from prod in db.Products
+                               join Supplier in db.Suppliers on prod.SupplierId equals Supplier.SupplierId
+                               where prod.QuantityPerUnit.Contains("bottle")
+                               select new
+                               {
+                                   prod = prod,
+                                   supp = prod.Supplier
+                               };
+
+                var QueryEx3_1 = from prod in db.Products.Include(x=> x.Supplier)
+                                 where prod.QuantityPerUnit.Contains("bottle")
+                                 select prod;
+
+                foreach (var element in QueryEx3_1)
+                {
+                    Console.WriteLine($"{element.ProductName}, {element.QuantityPerUnit}, {element.Supplier.ContactName}, {element.Supplier.Country}");
+                }
+
+                var QueryEx4 = from prod in db.Products
+                               join Category in db.Categories
+                               on prod.CategoryId equals Category.CategoryId
+                               group prod.ProductId by Category.CategoryName into g
+                               orderby g.Sum() descending
+                               select new
+                               {
+                                   CategoryName = g.Key,
+                                   TotalProduct = g.Sum()
+                               };
+
+                foreach (var element in QueryEx4)
+                {
+                    Console.WriteLine($"{element.CategoryName} : {element.TotalProduct}");
+                }
+
+                //var QueryEx5
+
+
+            }
         }
     }
 }
