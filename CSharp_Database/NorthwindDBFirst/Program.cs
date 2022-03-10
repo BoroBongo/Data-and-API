@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using Microsoft.EntityFrameworkCore;
 using NorthwindDBFirst;
 using System.Data;
 using System.Data.SqlClient;
@@ -122,165 +123,214 @@ namespace SQLWithCSharp
             //        connection.Close();
             //    }
             
+            //using (var db = new NorthwindContext())
+            //{
+            //    Console.WriteLine(db.ContextId);
+            //    // Read
+            //    // query syntax
+            //    foreach(var c in db.Customers)
+            //    {
+            //        Console.WriteLine($"{c.CompanyName}, {c.CustomerId}");
+            //    }
+            //    Console.WriteLine("--------------------------------------------------------------------");
+
+            //    // Alternative list (method syntax)
+
+            //    db.Customers.ToList().ForEach(c => Console.WriteLine($"{c.CompanyName}, {c.CustomerId}"));
+
+            //    var selectedCustomer = db.Customers.Where(c=>c.CustomerId=="BLOGG").FirstOrDefault();
+
+            //    if (selectedCustomer != null)
+            //    {
+            //        db.Customers.RemoveRange(selectedCustomer);
+            //    }
+            //    db.SaveChanges();
+
+            //    Console.WriteLine("--------------------------------------------------------------------");
+            //    db.Customers.ToList().ForEach(c => Console.WriteLine($"{c.CompanyName}, {c.CustomerId}"));
+            //    Console.WriteLine("--------------------------------------------------------------------");
+
+            //    var newCustomer = new Customer
+            //    {
+            //        CustomerId = "BLOGG",
+            //        ContactName = "Joe Bloggs",
+            //        CompanyName = "UKSA"
+            //    };
+            //    db.Customers.Add(newCustomer);
+            //    db.SaveChanges();
+
+            //    db.Customers.ToList().ForEach(c => Console.WriteLine($"{c.CompanyName}, {c.CustomerId}"));
+
+            //    // UPDATE
+
+            //    selectedCustomer = db.Customers.Where((c) => c.CustomerId == "BLOGG").FirstOrDefault();
+
+            //    if(selectedCustomer != null)
+            //    {
+            //        selectedCustomer.City = "London";
+            //        db.SaveChanges();
+            //    }
+
+            //    //alternative find
+            //    var p = db.Customers.Find("BLOGG");
+
+            //    Console.WriteLine($"{p.CustomerId}, {p.ContactName}, {p.CompanyName}, {p.City}");
+            //    Console.WriteLine("--------------------------------------------------------------------");
+
+            //    //define a query expression
+            //    var myQuery = db.Customers.Where(c => c.CustomerId == "BONAP");
+            //    //OR
+            //    var mySelectedCustomer = db.Customers.Find("BONAP");
+
+            //    // EXECUTE the query
+
+            //    mySelectedCustomer = myQuery.FirstOrDefault(); //without FirstOrDefault myQuery is just an IQuerable<Customer>
+
+            //    IEnumerable<Customer> query3 =
+            //        from c in db.Customers
+            //        where c.City == "London"
+            //        select c;
+
+            //    //iterate - execute the query 
+            //    foreach (var c in query3)
+            //    {
+            //        Console.WriteLine($"Customer {c.GetFullName()} lives in {c.City}");
+            //    }
+
+            //    // call an aggregation function - Count, Max, Average, First, FirstOrDefault
+            //    int numCustomersInLondon = query3.Count();
+
+            //    //convert to an Array or List
+            //    var londonCustomerList = query3.ToList();
+            //    var londonCustomerArray = query3.ToArray();
+
+            //    Console.WriteLine(numCustomersInLondon);
+
+            //    // more query syntax
+            //    var myList = new List<int> { 2, 5, 6 };
+            //    var numQuery = from number in myList select number;
+            //    foreach(var c in numQuery)
+            //    {
+            //        Console.WriteLine($"{c}");
+            //    }
+
+            //    IEnumerable<Customer> query4 =
+            //       from c in db.Customers
+            //       where c.City == "London" || c.City == "Berlin"
+            //       orderby c.ContactName ascending
+            //       select c;
+
+            //    foreach( var c in query4)
+            //    {
+            //        Console.WriteLine($"{c.GetFullName()} lives in {c.City}");
+            //    }
+
+            //    var query5 =
+            //       from c in db.Customers
+            //       where c.City == "London" || c.City == "Berlin"
+            //       orderby c.ContactName descending
+            //       select new { Name = c.CompanyName, Country = c.Country };
+
+            //    //  execute
+            //    foreach( var c in query5)
+            //    {
+            //        Console.WriteLine($"{c.Name}, {c.Country}, {c}");
+            //    }
+
+            //    // Create the query.
+            //    // The first line could also be written as "var studentQuery ="
+            //    IEnumerable<Student> studentQuery =
+            //        from student in students
+            //        where student.Scores[0] > 90
+            //        select student;
+            //    Console.WriteLine("--------------------------------------------------------------------");
+
+            //    foreach (Student student in studentQuery)
+            //    {
+            //        Console.WriteLine("{0}, {1}", student.Last, student.First);
+            //    }
+
+            //    var studentQuery2 =
+            //        from student in students
+            //        group student by student.Last[0];
+
+
+            //    foreach(var studentGroup in studentQuery2)
+            //    {
+            //        Console.WriteLine(studentGroup.Key);
+            //        foreach(var student in studentGroup)
+            //        {
+            //            Console.WriteLine("   {0}, {1}",
+            //                student.Last, student.First);
+            //        }
+            //    }
+
+            //    var studentQuery5 =
+            //    from student in students
+            //    let totalScore = student.Scores[0] + student.Scores[1] +
+            //    student.Scores[2] + student.Scores[3]
+            //    where totalScore / 4 < student.Scores[0]
+            //    select student.Last + " " + student.First;
+
+            //    foreach (string s in studentQuery5)
+            //    {
+            //        Console.WriteLine(s);
+            //    }
+
+            //    var Query4Method = db.Customers.Where(c => c.City == "London").OrderBy(c => c.ContactName);
+            //
+            //
+            //}
+
+
             using (var db = new NorthwindContext())
             {
-                Console.WriteLine(db.ContextId);
-                // Read
-                // query syntax
-                foreach(var c in db.Customers)
+                var ordersQuery = from Order in db.Orders.Include(ord=>ord.Customer).Include(ord=>ord.OrderDetails).ThenInclude(od=>od.Product)
+                                  where Order.Freight > 750
+                                  select Order;
+
+                foreach(var order in ordersQuery)
                 {
-                    Console.WriteLine($"{c.CompanyName}, {c.CustomerId}");
-                }
-                Console.WriteLine("--------------------------------------------------------------------");
-
-                // Alternative list (method syntax)
-
-                db.Customers.ToList().ForEach(c => Console.WriteLine($"{c.CompanyName}, {c.CustomerId}"));
-
-                var selectedCustomer = db.Customers.Where(c=>c.CustomerId=="BLOGG").FirstOrDefault();
-
-                if (selectedCustomer != null)
-                {
-                    db.Customers.RemoveRange(selectedCustomer);
-                }
-                db.SaveChanges();
-
-                Console.WriteLine("--------------------------------------------------------------------");
-                db.Customers.ToList().ForEach(c => Console.WriteLine($"{c.CompanyName}, {c.CustomerId}"));
-                Console.WriteLine("--------------------------------------------------------------------");
-
-                var newCustomer = new Customer
-                {
-                    CustomerId = "BLOGG",
-                    ContactName = "Joe Bloggs",
-                    CompanyName = "UKSA"
-                };
-                db.Customers.Add(newCustomer);
-                db.SaveChanges();
-
-                db.Customers.ToList().ForEach(c => Console.WriteLine($"{c.CompanyName}, {c.CustomerId}"));
-
-                // UPDATE
-
-                selectedCustomer = db.Customers.Where((c) => c.CustomerId == "BLOGG").FirstOrDefault();
-
-                if(selectedCustomer != null)
-                {
-                    selectedCustomer.City = "London";
-                    db.SaveChanges();
-                }
-
-                //alternative find
-                var p = db.Customers.Find("BLOGG");
-
-                Console.WriteLine($"{p.CustomerId}, {p.ContactName}, {p.CompanyName}, {p.City}");
-                Console.WriteLine("--------------------------------------------------------------------");
-
-                //define a query expression
-                var myQuery = db.Customers.Where(c => c.CustomerId == "BONAP");
-                //OR
-                var mySelectedCustomer = db.Customers.Find("BONAP");
-
-                // EXECUTE the query
-
-                mySelectedCustomer = myQuery.FirstOrDefault(); //without FirstOrDefault myQuery is just an IQuerable<Customer>
-
-                IEnumerable<Customer> query3 =
-                    from c in db.Customers
-                    where c.City == "London"
-                    select c;
-
-                //iterate - execute the query 
-                foreach (var c in query3)
-                {
-                    Console.WriteLine($"Customer {c.GetFullName()} lives in {c.City}");
-                }
-
-                // call an aggregation function - Count, Max, Average, First, FirstOrDefault
-                int numCustomersInLondon = query3.Count();
-
-                //convert to an Array or List
-                var londonCustomerList = query3.ToList();
-                var londonCustomerArray = query3.ToArray();
-
-                Console.WriteLine(numCustomersInLondon);
-
-                // more query syntax
-                var myList = new List<int> { 2, 5, 6 };
-                var numQuery = from number in myList select number;
-                foreach(var c in numQuery)
-                {
-                    Console.WriteLine($"{c}");
-                }
-
-                IEnumerable<Customer> query4 =
-                   from c in db.Customers
-                   where c.City == "London" || c.City == "Berlin"
-                   orderby c.ContactName ascending
-                   select c;
-
-                foreach( var c in query4)
-                {
-                    Console.WriteLine($"{c.GetFullName()} lives in {c.City}");
-                }
-
-                var query5 =
-                   from c in db.Customers
-                   where c.City == "London" || c.City == "Berlin"
-                   orderby c.ContactName descending
-                   select new { Name = c.CompanyName, Country = c.Country };
-
-                //  execute
-                foreach( var c in query5)
-                {
-                    Console.WriteLine($"{c.Name}, {c.Country}, {c}");
-                }
-
-                // Create the query.
-                // The first line could also be written as "var studentQuery ="
-                IEnumerable<Student> studentQuery =
-                    from student in students
-                    where student.Scores[0] > 90
-                    select student;
-                Console.WriteLine("--------------------------------------------------------------------");
-
-                foreach (Student student in studentQuery)
-                {
-                    Console.WriteLine("{0}, {1}", student.Last, student.First);
-                }
-
-                var studentQuery2 =
-                    from student in students
-                    group student by student.Last[0];
-
-
-                foreach(var studentGroup in studentQuery2)
-                {
-                    Console.WriteLine(studentGroup.Key);
-                    foreach(var student in studentGroup)
+                    if(order.Customer != null)
                     {
-                        Console.WriteLine("   {0}, {1}",
-                            student.Last, student.First);
+                        Console.WriteLine($"{order.Customer.ContactName} of {order.Customer.City} paid {order.Freight} for shipping");
+                    }
+                }
+                Console.WriteLine("----------------------------------------------------");
+                foreach(var order in ordersQuery)
+                {
+                    if(order.Customer != null)
+                    {
+                        Console.WriteLine($"{order.Customer.ContactName} of {order.Customer.City} paid {order.Freight} for shipping");
+                    }
+                    foreach(var oD in order.OrderDetails)
+                    {
+                        if(oD.Order != null)
+                        {
+                            Console.WriteLine($"\tProduct ID: {oD.ProductId}, Product Name: {oD.Product.ProductName}, Quantity: {oD.Quantity}");
+                        }
                     }
                 }
 
-                var studentQuery5 =
-                from student in students
-                let totalScore = student.Scores[0] + student.Scores[1] +
-                student.Scores[2] + student.Scores[3]
-                where totalScore / 4 < student.Scores[0]
-                select student.Last + " " + student.First;
-
-                foreach (string s in studentQuery5)
+                Console.WriteLine("----------------------------------------------------");
+                var orderQueryUsingJoin = from Ord in db.Orders
+                                          where Ord.Freight > 750
+                                          join Customer in db.Customers on Ord.CustomerId equals Customer.CustomerId
+                                          select new
+                                          {
+                                              CustomerContactName = Customer.ContactName,
+                                              City = Customer.City,
+                                              Freight = Ord.Freight
+                                          };
+                foreach(var result in orderQueryUsingJoin)
                 {
-                    Console.WriteLine(s);
+                    Console.WriteLine($"{result.CustomerContactName} of {result.City} paid {result.Freight} for shipping");
                 }
 
-                var Query4Method = db.Customers.Where(c => c.City == "London").OrderBy(c => c.ContactName);
 
-
-
+                int a = 0;
             }
+            //end of <using>
 
         }
     }
